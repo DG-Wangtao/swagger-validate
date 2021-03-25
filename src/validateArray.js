@@ -15,6 +15,13 @@ function validateArray(candidate, dataType, models) {
     return new errorTypes.NotAnArrayError(candidate, typeof candidate);
   }
 
+  if ('maxLength' in dataType && candidate.length > dataType.maxLength) {
+    return new errorTypes.ArrayLengthTooLongError(dataType.maxLength);
+  }
+  if ('minLength' in dataType && candidate.length < dataType.minLength) {
+    return new errorTypes.ArrayLengthTooShortError(dataType.minLength);
+  }
+
   const items = dataType.items;
 
   if (dataType.uniqueItems) {
@@ -39,16 +46,22 @@ function validateArray(candidate, dataType, models) {
     }
   }
 
-  let errors;
+  const errors =[];
 
   if (items.$ref) {
     const model = models[items.$ref];
-    errors = candidate.filter(function(value) {
-      return validate.model(value, model, models);
+    candidate.map(function(value) {
+      const err=validate.model(value, model, models);
+      if (err) {
+        errors.push(err);
+      }
     });
   } else {
-    errors = candidate.filter(function(value) {
-      return validate.dataType(value, items, models);
+    candidate.map(function(value) {
+      const err= validate.dataType(value, items, models);
+      if (err) {
+        errors.push(err);
+      }
     });
   }
 
@@ -56,4 +69,5 @@ function validateArray(candidate, dataType, models) {
     return new errorTypes.ErrorsInArrayElementsError(errors);
   }
 }
+
 module.exports = validateArray;

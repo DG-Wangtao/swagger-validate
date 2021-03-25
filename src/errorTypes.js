@@ -4,6 +4,18 @@
  * DataTypeValidationError
  * @param {*} message - message
  */
+function IsNullError(message) {
+  this.name = 'IsNullError';
+  this.message = message || 'Could not to be null';
+}
+IsNullError.prototype = Object.create(Error.prototype);
+IsNullError.prototype.constructor = IsNullError;
+exports.IsNullError = IsNullError;
+
+/**
+ * DataTypeValidationError
+ * @param {*} message - message
+ */
 function DataTypeValidationError(message) {
   this.name = 'DataTypeValidationError';
   this.message = message || 'Invalid data type';
@@ -18,7 +30,7 @@ exports.DataTypeValidationError = DataTypeValidationError;
  */
 function NotAnIntegerError(value) {
   this.name = 'NotAnIntegerError';
-  this.message = '"' + value + '" is not an integer';
+  this.message = value + ' is not an integer';
   this.value = value;
 }
 NotAnIntegerError.prototype = Object.create(DataTypeValidationError.prototype);
@@ -32,7 +44,7 @@ exports.NotAnIntegerError = NotAnIntegerError;
  */
 function NotANumberError(value, actualType) {
   this.name = 'NotANumberError';
-  this.message = '"' + value + '" is not a number';
+  this.message = value + ' is not a number';
   if (actualType) this.message += ' (got a ' + actualType + ' instead)';
 
   this.value = value;
@@ -43,13 +55,27 @@ exports.NotANumberError = NotANumberError;
 
 
 /**
+ * NumberFormatError
+ * @param {*} value - value
+ * @param {*} format
+ */
+function NumberFormatError(value, format) {
+  this.name = 'NumberFormatError';
+  this.message = value + ' is not a validate format of ' + format;
+  this.value = value;
+}
+NumberFormatError.prototype = Object.create(DataTypeValidationError.prototype);
+NumberFormatError.prototype.constructor = NumberFormatError;
+exports.NumberFormatError = NumberFormatError;
+
+/**
  * NumberTooLargeError
  * @param {*} value - value
  * @param {*} max - max value
  */
 function NumberTooLargeError(value, max) {
   this.name = 'NumberTooLargeError';
-  this.message = '"' + value + '" is above the maximum of ' + max.toString();
+  this.message = value + ' is above the maximum of ' + max.toString();
   this.value = value;
 }
 NumberTooLargeError.prototype = Object.create(DataTypeValidationError.prototype);
@@ -63,7 +89,7 @@ exports.NumberTooLargeError = NumberTooLargeError;
  */
 function NumberTooSmallError(value, min) {
   this.name = 'NumberTooSmallError';
-  this.message = '"' + value + '" is below the minimum of ' + min.toString();
+  this.message = value + ' is below the minimum of ' + min.toString();
   this.value = value;
 }
 NumberTooSmallError.prototype = Object.create(DataTypeValidationError.prototype);
@@ -77,7 +103,7 @@ exports.NumberTooSmallError = NumberTooSmallError;
  */
 function NotABooleanError(value, actualType) {
   this.name = 'NotABooleanError';
-  this.message = '"' + value + '" is not a boolean';
+  this.message = value + ' is not a boolean';
   if (actualType) this.message += ' (got a ' + actualType + ' instead)';
 
   this.value = value;
@@ -93,7 +119,7 @@ exports.NotABooleanError = NotABooleanError;
  */
 function NotAnArrayError(value, actualType) {
   this.name = 'NotAnArrayError';
-  this.message = '"' + value + '" is not an array';
+  this.message = value + ' is not an array';
   if (actualType) this.message += ' (got a ' + actualType + ' instead)';
 
   this.value = value;
@@ -102,6 +128,29 @@ NotAnArrayError.prototype = Object.create(DataTypeValidationError.prototype);
 NotAnArrayError.prototype.constructor = NotAnArrayError;
 exports.NotAnArrayError = NotAnArrayError;
 
+/**
+ * ArrayLengthTooLongError
+ * @param {*} maxLength - max length of array
+ */
+function ArrayLengthTooLongError(maxLength) {
+  this.name = 'ArrayLengthTooLongError';
+  this.message = `array length is bigger than ${maxLength}`;
+}
+ArrayLengthTooLongError.prototype = Object.create(DataTypeValidationError.prototype);
+ArrayLengthTooLongError.prototype.constructor = ArrayLengthTooLongError;
+exports.ArrayLengthTooLongError = ArrayLengthTooLongError;
+
+/**
+ * ArrayLengthTooShortError
+ * @param {*} minLength - min length of array
+ */
+function ArrayLengthTooShortError(minLength) {
+  this.name = 'ArrayLengthTooShortError';
+  this.message = `array length is smaller than ${minLength}`;
+}
+ArrayLengthTooShortError.prototype = Object.create(DataTypeValidationError.prototype);
+ArrayLengthTooShortError.prototype.constructor = ArrayLengthTooShortError;
+exports.ArrayLengthTooShortError = ArrayLengthTooShortError;
 
 /**
  * DuplicateInSetError
@@ -110,7 +159,7 @@ exports.NotAnArrayError = NotAnArrayError;
  */
 function DuplicateInSetError(arr, dupes) {
   this.name = 'DuplicateInSetError';
-  this.message = 'Duplicates ("' + dupes.join('", "') + '") found in set: ["' + arr.join('", "') + '"';
+  this.message = 'Duplicates (' + dupes.join(', ') + ') found in set: [' + arr.join(', ');
   this.dupes = dupes;
   this.value = arr;
 }
@@ -126,7 +175,7 @@ exports.DuplicateInSetError = DuplicateInSetError;
  */
 function NotVoidError(value, actualType) {
   this.name = 'NotVoidError';
-  this.message = '"' + value + '" is not null or undefined';
+  this.message = value + ' is not null or undefined';
   if (actualType) this.message += ' (got a ' + actualType + ' instead)';
 
   this.value = value;
@@ -135,6 +184,22 @@ NotVoidError.prototype = Object.create(DataTypeValidationError.prototype);
 NotVoidError.prototype.constructor = NotVoidError;
 exports.NotVoidError = NotVoidError;
 
+
+/**
+ * NotAStringError
+ * @param {*} value - value
+ * @param {*} actualType - actual Type
+ */
+function ConvertError(value, type) {
+  this.name = 'ConvertError';
+  this.message = `${value} is not type of ${type}`;
+  this.value = value;
+}
+ConvertError.prototype = Object.create(DataTypeValidationError.prototype);
+ConvertError.prototype.constructor = ConvertError;
+exports.ConvertError = ConvertError;
+
+
 /**
  * NotAStringError
  * @param {*} value - value
@@ -142,7 +207,7 @@ exports.NotVoidError = NotVoidError;
  */
 function NotAStringError(value, actualType) {
   this.name = 'NotAStringError';
-  this.message = '"' + value + '" is not a string';
+  this.message = value + ' is not a string';
   if (actualType) this.message += ' (got a ' + actualType + ' instead)';
 
   this.value = value;
@@ -151,6 +216,7 @@ NotAStringError.prototype = Object.create(DataTypeValidationError.prototype);
 NotAStringError.prototype.constructor = NotAStringError;
 exports.NotAStringError = NotAStringError;
 
+
 /**
  * StringTooLongError
  * @param {*} value - value
@@ -158,7 +224,7 @@ exports.NotAStringError = NotAStringError;
  */
 function StringTooLongError(value, max) {
   this.name = 'StringTooLongError';
-  this.message = '"' + value + '" length is bigger than  "' + max + '"';
+  this.message = value + ' length is bigger than  ' + max;
 
   this.value = value;
 }
@@ -173,7 +239,7 @@ exports.StringTooLongError = StringTooLongError;
  */
 function StringTooShortError(value, min) {
   this.name = 'StringTooShortError';
-  this.message = '"' + value + '" length is smaller than "' + min + '"';
+  this.message = value + ' length is smaller than ' + min;
 
   this.value = value;
 }
@@ -188,7 +254,7 @@ exports.StringTooShortError = StringTooShortError;
  */
 function StringNotEmptyError(value, acceptableValues) {
   this.name = 'StringNotEmptyError';
-  this.message = '"' + value + '" is empty : "' + acceptableValues.join('", "') + '"';
+  this.message = value + ' is empty : ' + acceptableValues;
 
   this.value = value;
 }
@@ -203,7 +269,7 @@ exports.StringNotEmptyError = StringNotEmptyError;
  */
 function StringNotInEnumError(value, acceptableValues) {
   this.name = 'StringNotInEnumError';
-  this.message = '"' + value + '" is not an acceptable value: "' + acceptableValues.join('", "') + '"';
+  this.message = value + ' is not an acceptable value: ' + acceptableValues;
 
   this.value = value;
 }
@@ -218,7 +284,7 @@ exports.StringNotInEnumError = StringNotInEnumError;
  */
 function StringFormatNotValidError(value, pattern) {
   this.name = 'StringFormatNotValidError';
-  this.message = '"' + value + '" is not an acceptable value: "' + pattern + '"';
+  this.message = value + ' is not an acceptable value: ' + pattern + ' needed!';
 
   this.value = value;
 }
@@ -227,20 +293,46 @@ StringFormatNotValidError.prototype.constructor = StringFormatNotValidError;
 exports.StringFormatNotValidError = StringFormatNotValidError;
 
 /**
- * NotADateValueError
+ * RegExpValidateError
+ * @param {*} value - value
+ * @param {*} pattern - pattern
+ */
+function RegExpValidateError(value, pattern) {
+  this.name = 'RegExpValidateError';
+  this.message = `${value}  is not a valid ${pattern} value`;
+  this.value = value;
+}
+RegExpValidateError.prototype = Object.create(RegExpValidateError.prototype);
+RegExpValidateError.prototype.constructor = RegExpValidateError;
+exports.RegExpValidateError = RegExpValidateError;
+
+/**
+ * InValidDateValueError
  * @param {*} value - value
  * @param {*} actualType - actual type
  */
-function NotADateValueError(value, actualType) {
-  this.name = 'NotADateValueError';
-  this.message = '"' + value + '" is not a date value';
-  if (actualType) this.message += ' (got a ' + actualType + ' instead)';
-
+function InValidDateValueError(value, actualType) {
+  this.name = 'InValidDateValueError';
+  this.message = value + ' is not a valid date value';
   this.value = value;
 }
-NotADateValueError.prototype = Object.create(DataTypeValidationError.prototype);
-NotADateValueError.prototype.constructor = NotADateValueError;
-exports.NotADateValueError = NotADateValueError;
+InValidDateValueError.prototype = Object.create(InValidDateValueError.prototype);
+InValidDateValueError.prototype.constructor = InValidDateValueError;
+exports.InValidDateValueError = InValidDateValueError;
+
+/**
+ * DateFormatError
+ * @param {*} value - value
+ * @param {*} actualType - actual type
+ */
+function DateFormatError(value, actualType) {
+  this.name = 'DateFormatError';
+  this.message = value + ' is not a valid ISO_8601 format date';
+  this.value = value;
+}
+DateFormatError.prototype = Object.create(DateFormatError.prototype);
+DateFormatError.prototype.constructor = DateFormatError;
+exports.DateFormatError = DateFormatError;
 
 /**
  * ErrorsInArrayElementsError
@@ -248,7 +340,7 @@ exports.NotADateValueError = NotADateValueError;
  */
 function ErrorsInArrayElementsError(errors) {
   this.name = 'ErrorsInArrayElementsError';
-  this.message = 'Errors in array elements:\n\t' + errors.join(',\n\t');
+  this.message = 'Errors in array elements: \n\t' + errors.join(', \n\t');
   this.errors = errors;
 }
 ErrorsInArrayElementsError.prototype = Object.create(DataTypeValidationError.prototype);
@@ -258,10 +350,10 @@ exports.ErrorsInArrayElementsError = ErrorsInArrayElementsError;
 /**
  * MissingValueError
  */
-function MissingValueError() {
+function MissingValueError(specName) {
   this.name = 'MissingValueError';
-
-  this.message = 'This value is required but missing';
+  this.specName = specName;
+  this.message = specName +' is required but missing';
 }
 MissingValueError.prototype = Object.create(DataTypeValidationError.prototype);
 MissingValueError.prototype.constructor = MissingValueError;
@@ -270,10 +362,10 @@ exports.MissingValueError = MissingValueError;
 /**
  * UnexpectedValueError
  */
-function UnexpectedValueError() {
+function UnexpectedValueError(specName) {
   this.name = 'UnexpectedValueError';
-
-  this.message = 'This value is unexpected';
+  this.specName = specName;
+  this.message = specName +' is unexpected';
 }
 UnexpectedValueError.prototype = Object.create(DataTypeValidationError.prototype);
 UnexpectedValueError.prototype.constructor = UnexpectedValueError;
@@ -291,7 +383,7 @@ function ValidationError(specName, spec, error) {
   this.spec = spec;
   this.error = error;
 
-  this.message = specName + ' is invalid: ' + error.message;
+  this.message = error.message;
 }
 ValidationError.prototype = Object.create(DataTypeValidationError.prototype);
 ValidationError.prototype.constructor = ValidationError;
