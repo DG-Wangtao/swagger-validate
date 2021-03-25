@@ -50,9 +50,6 @@
     "url": "https://github.com/DG-Wangtao/swagger-validate/issues"
   },
   "homepage": "https://github.com/DG-Wangtao/swagger-validate",
-  "publishConfig": {
-    "registry": "http://package.nemoface.com/repository/npm-private"
-  },
   "dependencies": {
     "luxon": "^1.26.0"
   }
